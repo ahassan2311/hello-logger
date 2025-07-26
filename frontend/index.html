@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello Logger Frontend</title>
+</head>
+<body>
+  <h1>Hello Logger 🌐</h1>
+  <button id="sendBtn">Send Hello to Backend</button>
+  <p id="response"></p>
+
+  <script>
+    const button = document.getElementById('sendBtn');
+    const responseText = document.getElementById('response');
+
+    button.onclick = async () => {
+      try {
+        const res = await fetch('/api/log', {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: 'Hello from frontend!'
+        });
+
+        const text = await res.text();
+        responseText.textContent = text;
+      } catch (err) {
+        responseText.textContent = 'Failed to reach backend 😢';
+      }
+    };
+  </script>
+</body>
+</html>
