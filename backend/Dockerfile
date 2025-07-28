@@ -1,12 +1,18 @@
+# Use lightweight Node.js Alpine image
 FROM node:18-alpine
 
+# Set working directory inside the container
 WORKDIR /app
 
-COPY package.json ./
+# Copy package files and install dependencies
+COPY package*.json ./
 RUN npm install
 
-COPY server.js ./
+# Copy all backend source files to container
+COPY . .
 
-EXPOSE 3000
+# Expose the port your backend listens on
+EXPOSE 4000
 
+# Start the backend service
 CMD ["npm", "start"]
