@@ -1,0 +1,30 @@
+# Terraform cache and state
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+
+# Crash logs
+crash.log
+
+# Sensitive data
+*.tfvars.json
+*.env
+
+# Ignore override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore .terraform.lock.hcl if not needed
+.terraform.lock.hcl
+
+# VSCode and other editor files
+.vscode/
+.idea/
+.DS_Store
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
