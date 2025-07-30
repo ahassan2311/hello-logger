@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: <your-domain-or-ip>        # optional, or remove host for default
+  - host: <your-domain-or-ip>
     http:
       paths:
       - path: /api(/|$)(.*)
