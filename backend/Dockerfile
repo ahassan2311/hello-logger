@@ -1,4 +1,4 @@
-# Use lightweight Node.js Alpine Image
+# Use lightweight Node.js Alpine image
 FROM node:18-alpine
 
 # Set working directory inside the container
