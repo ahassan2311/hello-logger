@@ -18,7 +18,12 @@ output "container_app_name" {
   value       = azurerm_container_app.app.name
 }
 
-output "container_app_fqdn" {
-  description = "The fully qualified domain name of the Container App"
+output "backend_container_app_fqdn" {
+  description = "The fully qualified domain name of the Backend Container App"
   value       = azurerm_container_app.app.latest_revision_fqdn
+}
+
+output "frontend_container_app_fqdn" {
+  description = "The fully qualified domain name of the Frontend Container App"
+  value = azurerm_container_app.frontend.latest_revision_fqdn
 }

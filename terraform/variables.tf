@@ -39,3 +39,8 @@ variable "container_port" {
   type        = number
   default     = 4000
 }
+
+variable "acr_login_server" {
+  description = "The login server URL of the Azure Container Registry"
+  type        = string
+}

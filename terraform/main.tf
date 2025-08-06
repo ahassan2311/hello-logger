@@ -49,7 +49,7 @@ resource "azurerm_container_app" "app" {
   template {
     container {
       name   = "hello-logger"
-      image  = "${azurerm_container_registry.acr.login_server}/hello-logger:latest"
+      image  = "hellologgeracr12345xg.azurecr.io/hello-logger:latest"
       cpu    = var.container_cpu
       memory = var.container_memory
       
@@ -75,7 +75,7 @@ resource "azurerm_container_app" "app" {
   }
 
   registry {
-    server               = azurerm_container_registry.acr.login_server
+    server               = "hellologgeracr12345xg.azurecr.io"
     username             = azurerm_container_registry.acr.admin_username
     password_secret_name = "acr-password"
   }
@@ -84,4 +84,45 @@ resource "azurerm_container_app" "app" {
     name  = "acr-password"
     value = azurerm_container_registry.acr.admin_password
   }
+}
+
+resource "azurerm_container_app" "frontend" {
+  name                         = "hello-logger-frontend"
+  container_app_environment_id = azurerm_container_app_environment.env.id
+  resource_group_name          = var.resource_group_name
+  revision_mode                = "Single"
+
+  template {
+    container {
+      name   = "frontend"
+      image = "hellologgeracr12345xg.azurecr.io/hello-logger-frontend:latest"
+      cpu    = 0.5
+      memory = "1.0Gi"
+
+      env {
+        name  = "VITE_BACKEND_URL"
+        value = "https://${azurerm_container_app.app.latest_revision_fqdn}/api/log"
+      }
+    }
+  }
+
+  ingress {
+    external_enabled = true
+    target_port      = 80
+
+    traffic_weight {
+      percentage      = 100
+      latest_revision = true
+  }
+  }
+  registry {
+    server               = "hellologgeracr12345xg.azurecr.io"
+    username             = azurerm_container_registry.acr.admin_username
+    password_secret_name = "acr-password-frontend"
+  }
+
+  secret {
+    name  = "acr-password-frontend"
+    value = azurerm_container_registry.acr.admin_password
+}
 }
