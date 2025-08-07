@@ -67,7 +67,7 @@ app.get("/logs", (req, res) => {
     <!DOCTYPE html>
     <html>
     <head>
-      <title>Backend Logs Dashboard</title>
+      <title>Logs Dashboard</title>
       <style>
         body { 
           font-family: Arial, sans-serif; 
@@ -162,7 +162,7 @@ app.get("/logs", (req, res) => {
     </head>
     <body>
       <div class="header">
-        <h1>📊 Backend Logs Dashboard</h1>
+        <h1>📊 Logs Dashboard</h1>
         <p>Real-time log monitoring and management</p>
       </div>
       
