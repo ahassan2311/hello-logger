@@ -48,9 +48,23 @@ jobs:
             --resource-group $RESOURCE_GROUP \
             --image $ACR_LOGIN_SERVER/hello-logger-backend:latest
 
+      - name: Activate Backend Revision
+        run: |
+          az containerapp revision set-mode \
+            --name $BACKEND_CONTAINER_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --mode Single
+
       - name: Deploy Frontend to Azure Container App
         run: |
           az containerapp update \
             --name $FRONTEND_CONTAINER_NAME \
             --resource-group $RESOURCE_GROUP \
             --image $ACR_LOGIN_SERVER/hello-logger-frontend:latest
+
+      - name: Activate Frontend Revision
+        run: |
+          az containerapp revision set-mode \
+            --name $FRONTEND_CONTAINER_NAME \
+            --resource-group $RESOURCE_GROUP \
+            --mode Single

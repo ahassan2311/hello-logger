@@ -1,4 +1,13 @@
 terraform {
+  backend "azurerm" {
+    resource_group_name   = "rg-hello-logger"
+    storage_account_name  = "hellologgerstate7998"   # replace with your actual storage account name
+    container_name        = "tfstate"
+    key                   = "terraform.tfstate"
+  }
+}
+
+terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
