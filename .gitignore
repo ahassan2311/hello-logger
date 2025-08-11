@@ -1,11 +1,12 @@
 # Terraform cache and state
 .terraform/
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
 terraform.tfvars
-terraform.tfstate
-terraform.tfstate.backup
 *.tfvars
+*.auto.tfvars
+*.auto.tfvars.json
+.terraform.lock.hcl
 
 # Crash logs
 crash.log
