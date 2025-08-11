@@ -1,4 +1,4 @@
-name: Build and Deploy to Azure Container Apps # test3
+name: Build and Deploy to Azure Container Apps
 
 on:
   push:
@@ -33,8 +33,8 @@ jobs:
 
       - name: Build and Push Backend Image
         run: |
-          docker build -t $ACR_LOGIN_SERVER/hello-logger-backend:latest ./backend
-          docker push $ACR_LOGIN_SERVER/hello-logger-backend:latest
+          docker build -t $ACR_LOGIN_SERVER/hello-logger:latest ./backend
+          docker push $ACR_LOGIN_SERVER/hello-logger:latest
 
       - name: Build and Push Frontend Image
         run: |
@@ -46,7 +46,7 @@ jobs:
           az containerapp update \
             --name $BACKEND_CONTAINER_NAME \
             --resource-group $RESOURCE_GROUP \
-            --image $ACR_LOGIN_SERVER/hello-logger-backend:latest
+            --image $ACR_LOGIN_SERVER/hello-logger:latest
 
       - name: Activate Backend Revision
         run: |
