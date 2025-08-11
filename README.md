@@ -1,6 +1,7 @@
 # Hello Logger App
 
 A containerised logging platform with backend and frontend apps deployed to Azure Container Apps. This project demonstrates infrastructure provisioning and deployment automation using Terraform and GitHub Actions on Azure.
+
 ---
 
 ## Project Overview
