@@ -3,22 +3,23 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Store logs in memory (note: will reset when container restarts)
+// In-memory log storage (cleared on restart)
 let logs = [];
 
-// Parse JSON bodies
+// Middleware to parse JSON request bodies
 app.use(express.json());
 
-// Use cors middleware 
+// Enable CORS for all routes
 app.use(cors());
 
-// Serve static files from public directory
+// Serve static files from 'public' directory
 app.use(express.static('public'));
 
+// Endpoint to receive logs (supports JSON or plain text)
 app.post('/api/log', (req, res) => {
   let message;
   
-  // Handle both JSON and text requests
+  // Determine message format in request body
   if (typeof req.body === 'string') {
     message = req.body;
   } else if (req.body && req.body.message) {
@@ -27,7 +28,7 @@ app.post('/api/log', (req, res) => {
     message = 'No message provided';
   }
   
-  // Store the log with timestamp
+  // Create log entry with timestamp and source info
   const logEntry = {
     id: Date.now(),
     message: message,
@@ -35,9 +36,9 @@ app.post('/api/log', (req, res) => {
     source: req.headers['user-agent'] || 'Unknown'
   };
   
-  logs.unshift(logEntry); // Add to beginning of array
+  logs.unshift(logEntry); // Add new log at the front
   
-  // Keep only last 100 logs to prevent memory issues
+  // Limit logs to last 100 entries for memory control
   if (logs.length > 100) {
     logs = logs.slice(0, 100);
   }
@@ -46,22 +47,23 @@ app.post('/api/log', (req, res) => {
   res.json({ status: '✅ Message received by backend!' });
 });
 
-// API endpoint to get all logs
+// Endpoint to retrieve all logs as JSON
 app.get('/api/logs', (req, res) => {
   res.json(logs);
 });
 
-// API endpoint to clear logs
+// Endpoint to clear all stored logs
 app.delete('/api/logs', (req, res) => {
   logs = [];
   res.json({ status: 'Logs cleared' });
 });
 
+// Basic root endpoint to verify backend is running
 app.get("/", (req, res) => {
   res.send("👋 Hello from the backend!");
 });
 
-// Logs dashboard endpoint
+// Serve logs dashboard HTML for viewing logs in browser
 app.get("/logs", (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -69,6 +71,7 @@ app.get("/logs", (req, res) => {
     <head>
       <title>Logs Dashboard</title>
       <style>
+        /* Styling for dashboard layout and appearance */
         body { 
           font-family: Arial, sans-serif; 
           max-width: 1200px; 
@@ -195,11 +198,13 @@ app.get("/logs", (req, res) => {
       </div>
       
       <script>
+        // Fetch and display logs from backend
         async function loadLogs() {
           try {
             const response = await fetch('/api/logs');
             const logs = await response.json();
             
+            // Update stats
             document.getElementById('total-logs').textContent = logs.length;
             document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
             
@@ -210,6 +215,7 @@ app.get("/logs", (req, res) => {
               return;
             }
             
+            // Render each log entry
             logsList.innerHTML = logs.map(log => \`
               <div class="log-entry">
                 <div class="log-bullet">•</div>
@@ -227,6 +233,7 @@ app.get("/logs", (req, res) => {
           }
         }
         
+        // Clear logs after user confirmation
         async function clearLogs() {
           if (confirm('Are you sure you want to clear all logs?')) {
             try {
@@ -238,10 +245,10 @@ app.get("/logs", (req, res) => {
           }
         }
         
-        // Load logs on page load
+        // Initial load of logs on page load
         loadLogs();
         
-        // Auto-refresh every 5 seconds
+        // Auto-refresh logs every 5 seconds
         setInterval(loadLogs, 5000);
       </script>
     </body>
@@ -249,6 +256,7 @@ app.get("/logs", (req, res) => {
   `);
 });
 
+// Start the Express server
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on port ${PORT}`);
   console.log(`📊 Logs dashboard available at: http://localhost:${PORT}/logs`);

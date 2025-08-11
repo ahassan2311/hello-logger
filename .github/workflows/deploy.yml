@@ -3,68 +3,69 @@ name: Build and Deploy to Azure Container Apps
 on:
   push:
     branches:
-      - main
+      - main   # Trigger workflow on pushes to the main branch
 
 env:
-  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
-  RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}
-  BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}
-  FRONTEND_CONTAINER_NAME: ${{ secrets.FRONTEND_CONTAINER_NAME }}
+  # Environment variables from GitHub Secrets for sensitive info
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}          # Azure Container Registry login server URL
+  RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP }}              # Azure resource group name
+  BACKEND_CONTAINER_NAME: ${{ secrets.BACKEND_CONTAINER_NAME }}    # Backend container app name
+  FRONTEND_CONTAINER_NAME: ${{ secrets.FRONTEND_CONTAINER_NAME }}  # Frontend container app name
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest     # Use latest Ubuntu runner
     permissions:
-      id-token: write
-      contents: read
+      id-token: write          # Needed for Azure login OIDC token
+      contents: read           # Read repo contents
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3   # Checkout repo code for building
 
       - name: Log in to Azure
-        uses: azure/login@v1
+        uses: azure/login@v1        # Authenticate to Azure using service principal credentials
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Log in to ACR
         run: |
-          az acr login --name hellologgeracr12345xg
+          az acr login --name hellologgeracr12345xg  # Login to Azure Container Registry
 
       - name: Build and Push Backend Image
         run: |
-          docker build -t $ACR_LOGIN_SERVER/hello-logger:latest ./backend
-          docker push $ACR_LOGIN_SERVER/hello-logger:latest
+          docker build -t $ACR_LOGIN_SERVER/hello-logger:latest ./backend   # Build backend Docker image
+          docker push $ACR_LOGIN_SERVER/hello-logger:latest                # Push backend image to ACR
 
       - name: Build and Push Frontend Image
         run: |
-          docker build -t $ACR_LOGIN_SERVER/hello-logger-frontend:latest ./frontend
-          docker push $ACR_LOGIN_SERVER/hello-logger-frontend:latest
+          docker build -t $ACR_LOGIN_SERVER/hello-logger-frontend:latest ./frontend   # Build frontend Docker image
+          docker push $ACR_LOGIN_SERVER/hello-logger-frontend:latest                # Push frontend image to ACR
 
       - name: Deploy Backend to Azure Container App
         run: |
           az containerapp update \
             --name $BACKEND_CONTAINER_NAME \
             --resource-group $RESOURCE_GROUP \
-            --image $ACR_LOGIN_SERVER/hello-logger:latest
+            --image $ACR_LOGIN_SERVER/hello-logger:latest    # Update backend container app with new image
 
       - name: Activate Backend Revision
         run: |
           az containerapp revision set-mode \
             --name $BACKEND_CONTAINER_NAME \
             --resource-group $RESOURCE_GROUP \
-            --mode Single
-
+            --mode Single    # Set backend container app revision mode to single
+            
       - name: Deploy Frontend to Azure Container App
         run: |
           az containerapp update \
             --name $FRONTEND_CONTAINER_NAME \
             --resource-group $RESOURCE_GROUP \
-            --image $ACR_LOGIN_SERVER/hello-logger-frontend:latest
+            --image $ACR_LOGIN_SERVER/hello-logger-frontend:latest   # Update frontend container app with new image
 
       - name: Activate Frontend Revision
         run: |
           az containerapp revision set-mode \
             --name $FRONTEND_CONTAINER_NAME \
             --resource-group $RESOURCE_GROUP \
-            --mode Single
+            --mode Single    # Set frontend container app revision mode to single
