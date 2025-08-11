@@ -65,7 +65,7 @@ resource "azurerm_container_app" "app" {
 
   template {
     container {
-      name   = "hello-logger"                                   # Container name inside the app
+      name   = "hello-logger"                                   # Container name inside app
       image  = "hellologgeracr12345xg.azurecr.io/hello-logger:latest"  # Image from ACR with 'latest' tag
       cpu    = var.container_cpu                                 # CPU allocation from variable
       memory = var.container_memory                              # Memory allocation from variable
