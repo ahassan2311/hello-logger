@@ -20,7 +20,7 @@ override.tf.json
 *_override.tf
 *_override.tf.json
 
-# Ignore .terraform.lock.hcl if not needed
+# Ignore .terraform.lock.hcl
 .terraform.lock.hcl
 
 # VSCode and other editor files
